@@ -1,0 +1,88 @@
+How to change port or context path?
+
+
+If you are using Spring Boot, then you don't have to configure the server properties via Bean initializing.
+
+Instead, if one functionality is available for basic configuration, then it can be set in a "properties" file called application, which should reside under src\main\resources in your application structure. The "properties" file is available in two formats
+
+    .yml
+
+    .properties
+
+
+Under application.properties
+server.port=8080
+server.contextPath=/gyan
+
+Spring Boot and multiple external configuration files
+
+Under application.properties
+
+-Dspring.config.location=classpath:job1.properties,classpath:job2.properties
+This will add the 2 properties file to the files that are loaded. 
+
+How to deploy Spring boot to Tomcat
+
+https://stackoverflow.com/questions/27904594/spring-boot-war-deployed-to-tomcat
+
+How do I tell Spring Boot which main class to use for the executable jar?
+
+<build>
+<plugins>
+    <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+            <mainClass>myPackage.HelloWorld</mainClass> 
+        </configuration>
+    </plugin>
+</plugins>    
+</build>
+
+
+How to Add a Servlet Filter in a Spring Boot application?
+
+AbstractDispatcherServletInitializer also provides a convenient way to add Filter instances and have them automatically mapped to the DispatcherServlet:
+
+public class MyWebAppInitializer extends AbstractDispatcherServletInitializer {
+
+    // ...
+
+    @Override
+    protected Filter[] getServletFilters() {
+        return new Filter[] { new HiddenHttpMethodFilter(), new CharacterEncodingFilter() };
+    }
+
+}
+
+Each filter is added with a default name based on its concrete type and automatically mapped to the DispatcherServlet
+
+
+Spring boot running a fully executable JAR is as easy as typing:
+
+$ ./myapp.jar
+
+My question is in this case how to set -D properties, e.g.
+
+-Dspring.profiles.active=test
+
+
+There are two ways to configure properties like that:
+
+1:
+
+By specifying them in a separate configuration file. Spring Boot will look for a file named like JARfilename.conf 
+which should be stored in the same folder like the JAR file. 
+There you can add the environment variable JAVA_OPTS:
+
+JAVA_OPTS="-Dpropertykey=propvalue"
+
+2:
+
+Or you can just specify the value for the environment variable in the shell before you execute the application:
+
+JAVA_OPTS="-Dpropertykey=propvalue" ./myapp.jar
+
+
+
+
