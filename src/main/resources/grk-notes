@@ -1,5 +1,6 @@
-How to change port or context path?
+Extend either SpringBootServletInitializer or WebInitializer.
 
+How to change port or context path?
 
 If you are using Spring Boot, then you don't have to configure the server properties via Bean initializing.
 
@@ -58,6 +59,38 @@ public class MyWebAppInitializer extends AbstractDispatcherServletInitializer {
 Each filter is added with a default name based on its concrete type and automatically mapped to the DispatcherServlet
 
 
+How to define Servlet filter order of execution in Spring Boot application? 
+I have also tried introducing web.xml and converting the executable jar to war file But the application doesn't seem to recognize the web.xml
+
+
+setOrder(int) method does the job.
+
+@Configuration
+@EnableAutoConfiguration
+@EnableWebMvc
+@ComponentScan
+public class Application {
+
+    @Bean
+    public FilterRegistrationBean filterRegistrationBean() {
+        FilterRegistrationBean registrationBean = new FilterRegistrationBean();
+        SecurityFilter securityFilter = new SecurityFilter();
+        registrationBean.setFilter(securityFilter);
+        registrationBean.setOrder(2);
+        return registrationBean;
+    }
+
+    @Bean
+    public FilterRegistrationBean contextFilterRegistrationBean() {
+        FilterRegistrationBean registrationBean = new FilterRegistrationBean();
+        RequestContextFilter contextFilter = new RequestContextFilter();
+        registrationBean.setFilter(contextFilter);
+        registrationBean.setOrder(1);
+        return registrationBean;
+    }
+}
+
+
 Spring boot running a fully executable JAR is as easy as typing:
 
 $ ./myapp.jar
@@ -82,6 +115,49 @@ JAVA_OPTS="-Dpropertykey=propvalue"
 Or you can just specify the value for the environment variable in the shell before you execute the application:
 
 JAVA_OPTS="-Dpropertykey=propvalue" ./myapp.jar
+
+
+Spring Boot - custom 404 page with standalone tomcat?
+
+Newer spring boot versions (1.X.RELEASE) has some refactoring around ServerProperties. See below,
+
+  public class ServerCustomization extends ServerProperties {
+
+  @Override
+  public void customize(ConfigurableEmbeddedServletContainer container) {
+
+    super.customize(container);
+    container.addErrorPages(new ErrorPage(HttpStatus.NOT_FOUND,
+            "/jsp/404.jsp"));
+    container.addErrorPages(new ErrorPage(HttpStatus.INTERNAL_SERVER_ERROR,
+            "/jsp/500.jsp"));
+    container.addErrorPages(new ErrorPage("/jsp/error.jsp"));
+  }
+
+}
+
+Then define a bean to inject ServerProperies.
+
+@Bean
+public ServerProperties getServerProperties() {
+    return new ServerCustomization();
+}
+
+
+How to Gracefully shutdown spring-boot application/
+
+https://stackoverflow.com/questions/26547532/how-to-shutdown-a-spring-boot-application-in-a-correct-way
+
+How to enable http server logs in an embedded tomcat server provided by spring boot? 
+
+
+
+Try setting below in application.properties
+
+server.tomcat.accessLogEnabled=true
+server.tomcat.accessLogPattern=%a asdasd
+
+and look in /tmp/tomcat.<random>.<port>/logs for the output files. Set server.tomcat.basedir property to change the directory.
 
 
 
