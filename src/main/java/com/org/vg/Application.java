@@ -16,6 +16,7 @@ import org.springframework.web.servlet.DispatcherServlet;
 public class Application extends SpringBootServletInitializer {
 
 	/*
+	 * How to throw exception in case of http errorcodes
 	@Bean  // Magic entry 
     public DispatcherServlet dispatcherServlet() {
         DispatcherServlet ds = new DispatcherServlet();
@@ -26,13 +27,18 @@ public class Application extends SpringBootServletInitializer {
     public static void main(final String[] args) {
         ApplicationContext ctx = SpringApplication.run(Application.class, args);
         
+	    /*
+        //To get hold of the dispatcherServlet
         DispatcherServlet dispatcherServlet = (DispatcherServlet)ctx.getBean("dispatcherServlet");
         dispatcherServlet.setThrowExceptionIfNoHandlerFound(true);
+	    */
 
     }
 
+	/*
     @Override
     protected final SpringApplicationBuilder configure(final SpringApplicationBuilder application) {
         return application.sources(Application.class);
     }
+    */
 }
